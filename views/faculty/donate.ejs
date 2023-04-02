@@ -27,8 +27,15 @@
 			
 			<div class="row">
 				<div class="mb-4 col-sm-8">
-					<label for="address" class="form-label">Address  to collect</label>
-					<input type="text" name="donation[address]" class="form-control" id="address" placeholder="Enter address.." value="<%= currentUser.address %>" required>
+					<label for="address" class="form-label">Quarter No</label>
+					<select name="donation[address]" id="adress" class="form-control">
+						<option value="Quarter A, Faculty Quarters, RGUKT RKValley">A </option>
+						<option value="Quarter B, Faculty Quarters, RGUKT RKValley">B</option>
+						<option value="Quarter C, Faculty Quarters, RGUKT RKValley">C </option>
+						<option value="Quarter D, Faculty Quarters, RGUKT RKValley">D </option>
+						<option value="Quarter E, Faculty Quarters, RGUKT RKValley">E </option>
+						
+					  </select>
 				</div>
 				
 				<div class="mb-4 col-sm-4">

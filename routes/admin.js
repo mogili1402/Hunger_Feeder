@@ -6,16 +6,56 @@ const Donation = require("../models/donation.js");
 
 
 router.get("/admin/dashboard", middleware.ensureAdminLoggedIn, async (req,res) => {
-	const numAdmins = await User.countDocuments({ role: "admin" });
+	const numFaculty = await User.countDocuments({ role: "faculty" });
+	const numMessManager = await User.countDocuments({ role: "messmanager" });
 	const numDonors = await User.countDocuments({ role: "donor" });
 	const numVolunteers = await User.countDocuments({ role: "volunteer" });
 	const numPendingDonations = await Donation.countDocuments({ status: "pending" });
 	const numAcceptedDonations = await Donation.countDocuments({ status: "accepted" });
 	const numAssignedDonations = await Donation.countDocuments({ status: "assigned" });
 	const numCollectedDonations = await Donation.countDocuments({ status: "collected" });
+
+	
+	
+	last30Days=[]
+	last30DaysDonations=[]
+	
+	aggregatedStats=await Donation.aggregate(
+		[
+			{
+				$group:
+				{
+					_id: {
+						$dateToString: {
+							"date": "$cookingTime",
+							"format": "%Y-%m-%d",
+							"timezone": "Asia/Kolkata"
+						}
+					}, 
+					count: { $sum:1 }
+				}
+			}
+		])
+	for (i=0;i<aggregatedStats.length;i++){
+
+		l=aggregatedStats[i]._id+"T00:00:00.000Z"
+		aggregatedStats[i]._id=new Date(l)
+			
+	}
+		
+	aggregatedStats.sort(function(a,b){return -(a._id.getTime() - b._id.getTime())});
+	
+	
+	for (i=0;i<aggregatedStats.length;i++){
+		aggregatedStats[i]._id=aggregatedStats[i]._id.toString()
+		last30Days.push(aggregatedStats[i]._id)
+		last30DaysDonations.push(aggregatedStats[i].count)
+	}
+
+	last30DaysDonations.push(0)
 	res.render("admin/dashboard", {
 		title: "Dashboard",
-		numAdmins, numDonors, numVolunteers, numPendingDonations, numAcceptedDonations, numAssignedDonations, numCollectedDonations
+		numFaculty, numMessManager, numDonors, numVolunteers, numPendingDonations, numAcceptedDonations, numAssignedDonations, numCollectedDonations, last30Days, last30DaysDonations
 	});
 });
 
@@ -142,28 +182,6 @@ router.get("/admin/volunteers", middleware.ensureAdminLoggedIn, async (req,res) 
 });
 
 
-router.get("/admin/profile", middleware.ensureAdminLoggedIn, (req,res) => {
-	res.render("admin/profile", { title: "My profile" });
-});
-
-router.put("/admin/profile", middleware.ensureAdminLoggedIn, async (req,res) => {
-	try
-	{
-		const id = req.user._id;
-		const updateObj = req.body.admin;	// updateObj: {firstName, lastName, gender, address, phone}
-		await User.findByIdAndUpdate(id, updateObj);
-		
-		req.flash("success", "Profile updated successfully");
-		res.redirect("/admin/profile");
-	}
-	catch(err)
-	{
-		console.log(err);
-		req.flash("error", "Some error occurred on the server.")
-		res.redirect("back");
-	}
-	
-});
 
 
 module.exports = router;

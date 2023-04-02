@@ -26,7 +26,7 @@ const middleware = {
 			return res.redirect("/auth/login");
 		}
 		if(req.user.role != "faculty") {
-			req.flash("warning", "This route is allowed for donor only!!");
+			req.flash("warning", "This route is allowed for Faculty only!!");
 			return res.redirect("back");
 		}
 		next();
@@ -71,7 +71,7 @@ const middleware = {
 	ensureNotLoggedIn: (req, res, next) => {
 		if(req.isAuthenticated()) {
 			console.log(req.isAuthenticated())
-			req.flash("warning", "Please logout first to continue");
+			//req.flash("warning", "Please logout first to continue");
 			if(req.user.role == "admin")
 				return res.redirect("/admin/dashboard");
 			if(req.user.role == "donor")

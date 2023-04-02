@@ -2,29 +2,42 @@
 	<%- include('../partials/adminSidebar') %>
 	
 	<div id="main-wrapper">
-		
 		<div class="bg-white shadow-sm p-3">
 			<span class="me-3" id="sidebar-toggler-btn"><i class="fas fa-bars"></i></span>
-			<h5 class="m-0 color-theme d-inline-block">Dashboard</h5>
+			<h2 class="m-0 color-theme d-inline-block">Dashboard</h2>
 		</div>
+		<h5 class="m-4 color-theme d-inline-block">Donation Stats</h5>
 		
+		<canvas id="lineChart" style="width:100%;max-width:700px" ></canvas>
+
+		<h3 class="m-4 color-theme d-inline-block">MemberShip Stats</h3>
+
 		<div class="d-flex gap-3 flex-wrap m-4 text-white">
 			
 			<div class="bg-primary rounded p-3" style="width: 250px;">
-				<div class="fs-1"><%= numAdmins %></div>
-				<div class="fs-5">admins</div>
+				<div class="fs-1"><%= numFaculty %></div>
+				<div class="fs-5">faculty</div>
+			</div>
+
+			<div class="bg-warning rounded p-3" style="width: 250px;">
+				<div class="fs-1"><%= numMessManager %></div>
+				<div class="fs-5">mess managers</div>
 			</div>
 			
 			<div class="bg-success rounded p-3" style="width: 250px;">
 				<div class="fs-1"><%= numDonors %></div>
-				<div class="fs-5">donors</div>
+				<div class="fs-5">outside-donors</div>
 			</div>
-			
+
 			<div class="bg-primary rounded p-3" style="width: 250px;">
 				<div class="fs-1"><%= numVolunteers %></div>
 				<div class="fs-5">volunteers</div>
 			</div>
-			
+		</div>
+
+		<h3 class="m-4 color-theme d-inline-block">Total Dotation stats</h3>
+
+		<div class="d-flex gap-3 flex-wrap m-4 text-white">
 			<div class="bg-success rounded p-3" style="width: 250px;">
 				<div class="fs-1"><%= numPendingDonations %></div>
 				<div class="fs-5">new donation requests</div>
@@ -47,5 +60,35 @@
 			
 		</div>
 		
+		<script>
+			Label=[]
+			<% for(var i=0; i<30; i++) {%>
+				Label.push("<%= last30Days[i] %>".slice(4,10))
+			<% } %>
+			Label.push("End")
+			var ctxL = document.getElementById("lineChart").getContext('2d');
+			var myLineChart = new Chart(ctxL, {
+			  type: 'line',
+			  data: {
+				labels:Label,
+				datasets: [{
+				  label: "Donations",
+				  data: [<%= last30DaysDonations %>],
+				  backgroundColor: [
+					'rgba(105, 0, 132, .2)',
+				  ],
+				  borderColor: [
+					'rgba(200, 99, 132, .7)',
+				  ],
+				  borderWidth: 2
+				}
+				]
+			  },
+			  options: {
+				responsive: true
+			  }
+			});
+			
+			</script>
 	</div>
 </main>
