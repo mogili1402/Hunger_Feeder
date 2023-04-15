@@ -13,7 +13,10 @@ const volunteerRoutes = require("./routes/volunteer.js");
 const messManagerRoutes = require("./routes/messmanager")
 const facultyRoutes = require("./routes/faculty")
 require("dotenv").config();
-require("./config/dbConnection.js")();
+require("./config/dbConnection.js")().then(()=>{
+	app.listen(port, console.log(`Server is running at http://localhost:${port}`));
+
+}).catch();
 require("./config/passport.js")(passport);
 
 
@@ -55,4 +58,3 @@ app.use((req,res) => {
 
 
 const port = process.env.PORT || 5000;
-app.listen(port, console.log(`Server is running at http://localhost:${port}`));
